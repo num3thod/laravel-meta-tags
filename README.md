@@ -2,6 +2,7 @@
 
 With this package you can manage header Meta and OG Tags from Laravel controllers. Kept up to date for the latest Laravel versions.
 
+### Current Laravel version supported: 5.4.*
 
 ----------
 
