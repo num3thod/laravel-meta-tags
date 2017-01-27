@@ -8,8 +8,7 @@
          convertWarningsToExceptions="true"
          processIsolation="false"
          stopOnFailure="true"
-         syntaxCheck="false"
->
+         syntaxCheck="false">
     <testsuites>
         <testsuite name="Unit">
             <directory suffix=".php">./tests/</directory>
