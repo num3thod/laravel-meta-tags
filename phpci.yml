@@ -14,7 +14,7 @@ test:
     path: "app"
     standard: "PSR1,PSR2"
   php_mess_detector:
-    path: "app"
+    path: "src/KekoApp"
     ignore:
       - tests/
     rules:
