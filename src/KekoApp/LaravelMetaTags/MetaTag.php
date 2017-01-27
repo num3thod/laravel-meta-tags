@@ -374,9 +374,7 @@ class MetaTag
 
         // Get host
         $array = explode('.', $this->request->getHttpHost());
-        $host = (array_key_exists(count($array) - 2, $array) ? $array[count($array) - 2] : '').'.'.$array[count(
-                $array
-            ) - 1];
+        $host = (array_key_exists(count($array) - 2, $array) ? $array[count($array) - 2] : '').'.'.$array[count($array) - 1];
 
         // Create URL from template
         $url = str_replace(
