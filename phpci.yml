@@ -11,7 +11,7 @@ test:
       - _ide_helper.php
       - tests/
   php_code_sniffer:
-    path: "app"
+    path: "src/KekoApp"
     standard: "PSR1,PSR2"
   php_mess_detector:
     path: "src/KekoApp"
