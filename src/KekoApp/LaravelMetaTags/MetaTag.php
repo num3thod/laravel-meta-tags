@@ -76,7 +76,7 @@ class MetaTag
      * @param  array                    $config
      * @param  string                   $defaultLocale
      */
-    public function __construct(Request $request, array $config, $defaultLocale)
+    public function __construct(Request $request, $defaultLocale, array $config = [])
     {
         $this->request = $request;
         $this->config = $config;
