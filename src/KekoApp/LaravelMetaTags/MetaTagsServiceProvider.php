@@ -37,15 +37,14 @@ class MetaTagsServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app['metatag'] = $this->app->singleton(
-            function ($app) {
-                return new MetaTag(
-                    $app['request'],
-                    $app['config']['meta-tags'],
-                    $app['config']->get('app.locale')
-                );
-            }
-        );
+        $this->app->singleton('metatag', function ($app) {
+            return new MetaTag(
+                $app['request'],
+                $app['config']->get('app.locale'),
+                $app['config']['meta-tags']
+            );
+        });
+
     }
 
 
