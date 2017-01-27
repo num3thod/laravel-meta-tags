@@ -41,7 +41,7 @@ class MetaTagsServiceProvider extends ServiceProvider
             function ($app) {
                 return new MetaTag(
                     $app['request'],
-                    $app['config']['meta-tags'], 
+                    $app['config']['meta-tags'],
                     $app['config']->get('app.locale')
                 );
             }
