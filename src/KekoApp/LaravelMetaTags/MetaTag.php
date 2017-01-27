@@ -79,7 +79,7 @@ class MetaTag
     public function __construct(Request $request, array $config, $defaultLocale)
     {
         $this->request = $request;
-        $this->config = $config ? $config : [];
+        $this->config = $config;
 
         $this->set('title', $this->config['title']);
         $this->set('url', $this->request->url());
