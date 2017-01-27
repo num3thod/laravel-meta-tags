@@ -1,0 +1,31 @@
+build_settings:
+  verbose: false
+  prefer_symlink: false
+
+setup:
+  composer:
+    action: "install"
+    prefer_dist: false
+
+test:
+  php_parallel_lint:
+    ignore:
+      - vendor/
+      - _ide_helper.php
+      - tests/
+  php_code_sniffer:
+    path: "app"
+    standard: "PSR1,PSR2"
+  php_mess_detector:
+
+    path: "app"
+    ignore:
+      - app/Http/Controllers/Controller.php
+      - tests/
+    rules:
+      - "/phpmd.xml"
+    allow_failures: true
+  php_unit:
+    config:
+      - "phpunit.xml"
+    path: "tests/"
