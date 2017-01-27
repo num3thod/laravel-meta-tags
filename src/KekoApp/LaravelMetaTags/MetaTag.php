@@ -70,7 +70,6 @@ class MetaTag
         'domain',
     ];
 
-
     /**
      * @param  \Illuminate\Http\Request $request
      * @param  array                    $config
