@@ -70,6 +70,7 @@ class MetaTag
         'domain',
     ];
 
+
     /**
      * @param  \Illuminate\Http\Request $request
      * @param  array                    $config
@@ -88,29 +89,6 @@ class MetaTag
         if (is_callable($this->config['locales'])) {
             $this->setLocales(call_user_func($this->config['locales']));
         }
-    }
-
-
-    /**
-     * Set app support locales.
-     *
-     * @param  array $locals
-     */
-    public function setLocales(array $locals = [])
-    {
-        $this->config['locales'] = $locals;
-    }
-
-
-    /**
-     * @param  string $key
-     * @param  string $default
-     *
-     * @return string
-     */
-    public function get($key, $default = null)
-    {
-        return array_get($this->metas, $key, $default);
     }
 
 
@@ -135,6 +113,63 @@ class MetaTag
 
 
     /**
+     * @param  string $text
+     *
+     * @return string
+     */
+    private function fix($text)
+    {
+        $text = preg_replace('/<[^>]+>/', ' ', $text);
+        $text = preg_replace('/[\r\n\s]+/', ' ', $text);
+
+        return trim(str_replace('"', '&quot;', $text));
+    }
+
+
+    /**
+     * @param  string $text
+     * @param  string $key
+     *
+     * @return string
+     */
+    private function cut($text, $key)
+    {
+        if (is_string($key) && isset($this->config[$key.'_limit'])) {
+            $limit = $this->config[$key.'_limit'];
+        } elseif (is_integer($key)) {
+            $limit = $key;
+        } else {
+            return $text;
+        }
+
+        $length = strlen($text);
+
+        if ($length <= (int)$limit) {
+            return $text;
+        }
+
+        $text = substr($text, 0, ($limit -= 3));
+
+        if ($space = strrpos($text, ' ')) {
+            $text = substr($text, 0, $space);
+        }
+
+        return $text.'...';
+    }
+
+
+    /**
+     * Set app support locales.
+     *
+     * @param  array $locals
+     */
+    public function setLocales(array $locals = [])
+    {
+        $this->config['locales'] = $locals;
+    }
+
+
+    /**
      * Create a tag based on the given key
      *
      * @param  string $key
@@ -150,6 +185,30 @@ class MetaTag
                 'content' => $value ?: Arr::get($this->metas, $key, ''),
             ]
         );
+    }
+
+
+    /**
+     * Create meta tag from attributes
+     *
+     * @param  array $values
+     *
+     * @return string
+     */
+    private function createTag(array $values)
+    {
+        $attributes = array_map(
+            function ($key) use ($values) {
+                $value = $this->fix($values[$key]);
+
+                return "{$key}=\"{$value}\"";
+            },
+            array_keys($values)
+        );
+
+        $attributes = implode(' ', $attributes);
+
+        return "<meta {$attributes}>\n    ";
     }
 
 
@@ -186,6 +245,40 @@ class MetaTag
 
 
     /**
+     * Returns an URL adapted to locale
+     *
+     * @param  string $locale
+     *
+     * @return string
+     */
+    private function localizedURL($locale)
+    {
+        // Default language doesn't get a special subdomain
+        $locale = ($locale !== $this->defaultLocale) ? strtolower($locale).'.' : '';
+
+        // URL elements
+        $uri = $this->request->getRequestUri();
+        $scheme = $this->request->getScheme();
+
+        // Get host
+        $array = explode('.', $this->request->getHttpHost());
+        
+        $host = (array_key_exists(count($array) - 2, $array) ? $array[count($array) - 2] : '').'.'.$array[count(
+                $array
+            ) - 1];
+
+        // Create URL from template
+        $url = str_replace(
+            ['[scheme]', '[locale]', '[host]', '[uri]'],
+            [$scheme, $locale, $host, $uri],
+            $this->config['locale_url']
+        );
+
+        return url($url);
+    }
+
+
+    /**
      * Create open graph tags
      *
      * @return string
@@ -216,6 +309,18 @@ class MetaTag
         }
 
         return implode('', $html);
+    }
+
+
+    /**
+     * @param  string $key
+     * @param  string $default
+     *
+     * @return string
+     */
+    public function get($key, $default = null)
+    {
+        return array_get($this->metas, $key, $default);
     }
 
 
@@ -283,106 +388,5 @@ class MetaTag
         }
 
         return $this->metas['title'] = self::cut($value, $limit).$title;
-    }
-
-
-    /**
-     * Create meta tag from attributes
-     *
-     * @param  array $values
-     *
-     * @return string
-     */
-    private function createTag(array $values)
-    {
-        $attributes = array_map(
-            function ($key) use ($values) {
-                $value = $this->fix($values[$key]);
-
-                return "{$key}=\"{$value}\"";
-            },
-            array_keys($values)
-        );
-
-        $attributes = implode(' ', $attributes);
-
-        return "<meta {$attributes}>\n    ";
-    }
-
-
-    /**
-     * @param  string $text
-     *
-     * @return string
-     */
-    private function fix($text)
-    {
-        $text = preg_replace('/<[^>]+>/', ' ', $text);
-        $text = preg_replace('/[\r\n\s]+/', ' ', $text);
-
-        return trim(str_replace('"', '&quot;', $text));
-    }
-
-
-    /**
-     * @param  string $text
-     * @param  string $key
-     *
-     * @return string
-     */
-    private function cut($text, $key)
-    {
-        if (is_string($key) && isset($this->config[$key.'_limit'])) {
-            $limit = $this->config[$key.'_limit'];
-        } elseif (is_integer($key)) {
-            $limit = $key;
-        } else {
-            return $text;
-        }
-
-        $length = strlen($text);
-
-        if ($length <= (int)$limit) {
-            return $text;
-        }
-
-        $text = substr($text, 0, ($limit -= 3));
-
-        if ($space = strrpos($text, ' ')) {
-            $text = substr($text, 0, $space);
-        }
-
-        return $text.'...';
-    }
-
-
-    /**
-     * Returns an URL adapted to locale
-     *
-     * @param  string $locale
-     *
-     * @return string
-     */
-    private function localizedURL($locale)
-    {
-        // Default language doesn't get a special subdomain
-        $locale = ($locale !== $this->defaultLocale) ? strtolower($locale).'.' : '';
-
-        // URL elements
-        $uri = $this->request->getRequestUri();
-        $scheme = $this->request->getScheme();
-
-        // Get host
-        $array = explode('.', $this->request->getHttpHost());
-        $host = (array_key_exists(count($array) - 2, $array) ? $array[count($array) - 2] : '').'.'.$array[count($array) - 1];
-
-        // Create URL from template
-        $url = str_replace(
-            ['[scheme]', '[locale]', '[host]', '[uri]'],
-            [$scheme, $locale, $host, $uri],
-            $this->config['locale_url']
-        );
-
-        return url($url);
     }
 }

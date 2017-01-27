@@ -3,19 +3,25 @@ use KekoApp\LaravelMeta\Meta;
 
 class Tests extends PHPUnit_Framework_TestCase
 {
+
     protected static $title;
+
     protected $Meta;
+
 
     public function setUp()
     {
         self::$title = self::text(20);
 
-        $this->Meta = new Meta([
-            'title_limit' => 70,
-            'description_limit' => 200,
-            'image_limit' => 5
-        ]);
+        $this->Meta = new Meta(
+            [
+                'title_limit'       => 70,
+                'description_limit' => 200,
+                'image_limit'       => 5,
+            ]
+        );
     }
+
 
     protected static function text($length)
     {
@@ -29,6 +35,7 @@ class Tests extends PHPUnit_Framework_TestCase
         return substr($text, 0, $length);
     }
 
+
     public function testMetaTitle()
     {
         $response = $this->Meta->meta('title', $text = self::text(50));
@@ -41,6 +48,7 @@ class Tests extends PHPUnit_Framework_TestCase
         $this->assertTrue(strlen($response) === 70);
     }
 
+
     public function testMetaDescription()
     {
         $response = $this->Meta->meta('description', $text = self::text(50));
@@ -52,6 +60,7 @@ class Tests extends PHPUnit_Framework_TestCase
         $this->assertNotTrue($text === $response);
         $this->assertTrue(strlen($response) === 200);
     }
+
 
     public function testMetaTitleWithTitle()
     {
@@ -69,6 +78,7 @@ class Tests extends PHPUnit_Framework_TestCase
         $this->assertTrue(strlen($response) === 70);
     }
 
+
     public function testMetaImage()
     {
         $response = $this->Meta->meta('image', $text = self::text(30));
@@ -80,7 +90,7 @@ class Tests extends PHPUnit_Framework_TestCase
         $this->assertTrue($text === $response);
 
         for ($i = 0; $i < 5; $i++) {
-            $response = $this->Meta->meta('image', $text =self::text(80));
+            $response = $this->Meta->meta('image', $text = self::text(80));
 
             if ($i > 2) {
                 $this->assertTrue($response === null);
@@ -91,6 +101,7 @@ class Tests extends PHPUnit_Framework_TestCase
 
         $this->assertTrue(count($this->Meta->meta('image')) === 5);
     }
+
 
     public function testTagTitle()
     {
@@ -105,6 +116,7 @@ class Tests extends PHPUnit_Framework_TestCase
         $this->assertTrue(strstr($tag, $text) ? true : false);
     }
 
+
     public function testTagMetaNameTitle()
     {
         $this->Meta->title(self::$title);
@@ -117,6 +129,7 @@ class Tests extends PHPUnit_Framework_TestCase
         $this->assertTrue(strstr($tag, self::$title) ? true : false);
         $this->assertTrue(strstr($tag, $text) ? true : false);
     }
+
 
     public function testTagMetaPropertyTitle()
     {
@@ -131,6 +144,7 @@ class Tests extends PHPUnit_Framework_TestCase
         $this->assertTrue(strstr($tag, $text) ? true : false);
     }
 
+
     public function testTagDescription()
     {
         $this->Meta->meta('description', $text = self::text(150));
@@ -141,6 +155,7 @@ class Tests extends PHPUnit_Framework_TestCase
         $this->assertTrue(substr_count($tag, 'description"') === 4);
         $this->assertTrue(strstr($tag, $text) ? true : false);
     }
+
 
     public function testTagMetaNameDescription()
     {
@@ -153,6 +168,7 @@ class Tests extends PHPUnit_Framework_TestCase
         $this->assertTrue(strstr($tag, $text) ? true : false);
     }
 
+
     public function testTagMetaPropertyDescription()
     {
         $this->Meta->meta('description', $text = self::text(150));
@@ -163,6 +179,7 @@ class Tests extends PHPUnit_Framework_TestCase
         $this->assertTrue(substr_count($tag, 'description"') === 2);
         $this->assertTrue(strstr($tag, $text) ? true : false);
     }
+
 
     public function testTagKeywords()
     {
@@ -175,6 +192,7 @@ class Tests extends PHPUnit_Framework_TestCase
         $this->assertTrue(strstr($tag, $text) ? true : false);
     }
 
+
     public function testTagMetaNameKeywords()
     {
         $this->Meta->meta('keywords', $text = self::text(150));
@@ -186,6 +204,7 @@ class Tests extends PHPUnit_Framework_TestCase
         $this->assertTrue(strstr($tag, $text) ? true : false);
     }
 
+
     public function testTagMetaPropertyKeywords()
     {
         $this->Meta->meta('keywords', $text = self::text(150));
@@ -196,6 +215,7 @@ class Tests extends PHPUnit_Framework_TestCase
         $this->assertTrue(substr_count($tag, 'keywords"') === 1);
         $this->assertTrue(strstr($tag, $text) ? true : false);
     }
+
 
     public function testTagImage()
     {

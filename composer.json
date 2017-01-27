@@ -1,6 +1,12 @@
 {
   "name": "kekoapp/laravel-meta-tags",
-  "keywords": ["meta tags", "meta", "tags", "head", "laravel"],
+  "keywords": [
+    "meta tags",
+    "meta",
+    "tags",
+    "head",
+    "laravel"
+  ],
   "description": "A package to manage Header Meta and OG Tags",
   "license": "MIT",
   "authors": [
