@@ -7,6 +7,7 @@ use Illuminate\Support\Arr;
 
 class MetaTag
 {
+
     /**
      * Instance of request
      *
@@ -42,8 +43,16 @@ class MetaTag
      * @var array
      */
     private $og = [
-        'title', 'description', 'type', 'image', 'url', 'audio',
-        'determiner', 'locale', 'site_name', 'video'
+        'title',
+        'description',
+        'type',
+        'image',
+        'url',
+        'audio',
+        'determiner',
+        'locale',
+        'site_name',
+        'video',
     ];
 
     /**
@@ -52,32 +61,36 @@ class MetaTag
      * @var array
      */
     private $twitter = [
-        'card', 'site', 'title', 'description',
-        'creator', 'image:src', 'domain'
+        'card',
+        'site',
+        'title',
+        'description',
+        'creator',
+        'image:src',
+        'domain',
     ];
 
+
     /**
-     * @param  \Illuminate\Http\Request  $request
-     * @param  array $config
-     * @param  string $defaultLocale
+     * @param  \Illuminate\Http\Request $request
+     * @param  array                    $config
+     * @param  string                   $defaultLocale
      */
-    public function __construct(Request $request, array $config = [], $defaultLocale)
+    public function __construct(Request $request, array $config, $defaultLocale)
     {
         $this->request = $request;
-        $this->config = $config;
+        $this->config = $config ? $config : [];
 
-        // Set defaults
         $this->set('title', $this->config['title']);
         $this->set('url', $this->request->url());
 
-        // Set default locale
         $this->defaultLocale = $defaultLocale;
 
-        // Is locales a callback
         if (is_callable($this->config['locales'])) {
             $this->setLocales(call_user_func($this->config['locales']));
         }
     }
+
 
     /**
      * Set app support locales.
@@ -89,9 +102,11 @@ class MetaTag
         $this->config['locales'] = $locals;
     }
 
+
     /**
      * @param  string $key
      * @param  string $default
+     *
      * @return string
      */
     public function get($key, $default = null)
@@ -99,9 +114,11 @@ class MetaTag
         return array_get($this->metas, $key, $default);
     }
 
+
     /**
      * @param  string $key
      * @param  string $value
+     *
      * @return string
      */
     public function set($key, $value = null)
@@ -117,20 +134,25 @@ class MetaTag
         return $this->metas[$key] = self::cut($value, $key);
     }
 
+
     /**
      * Create a tag based on the given key
      *
      * @param  string $key
      * @param  string $value
+     *
      * @return string
      */
     public function tag($key, $value = '')
     {
-        return $this->createTag([
-            'name' => $key,
-            'content' => $value ?: Arr::get($this->metas, $key, ''),
-        ]);
+        return $this->createTag(
+            [
+                'name'    => $key,
+                'content' => $value ?: Arr::get($this->metas, $key, ''),
+            ]
+        );
     }
+
 
     /**
      * Create canonical tags
@@ -139,26 +161,30 @@ class MetaTag
      */
     public function canonical()
     {
-        $html = $this->createTag([
-            'rel' => 'canonical',
-            'href' => $this->request->url()
-        ]);
+        $html = $this->createTag(
+            [
+                'rel'  => 'canonical',
+                'href' => $this->request->url(),
+            ]
+        );
 
-        foreach ($this->config['locales'] as $value)
-        {
+        foreach ($this->config['locales'] as $value) {
             // Turn current URL into a localized URL
             // using the given lang code
             $url = $this->localizedURL($value);
 
-            $html .= $this->createTag([
-                'rel' => 'alternate',
-                'hreflang' => $value,
-                'href' => $url
-            ]);
+            $html .= $this->createTag(
+                [
+                    'rel'      => 'alternate',
+                    'hreflang' => $value,
+                    'href'     => $url,
+                ]
+            );
         }
 
         return $html;
     }
+
 
     /**
      * Create open graph tags
@@ -168,27 +194,31 @@ class MetaTag
     public function openGraph()
     {
         $html = [
-            'url' => $this->createTag([
-                'property' => 'og:url',
-                'content' => $this->request->url()
-            ])
+            'url' => $this->createTag(
+                [
+                    'property' => 'og:url',
+                    'content'  => $this->request->url(),
+                ]
+            ),
         ];
 
-        foreach ($this->og as $tag)
-        {
+        foreach ($this->og as $tag) {
             // Get value for tag, default to dynamically set value
             $value = array_get($this->config['open_graph'], $tag, $this->get($tag));
 
             if ($value) {
-                $html[$tag] = $this->createTag([
-                    'property' => "og:{$tag}",
-                    'content' => $value
-                ]);
+                $html[$tag] = $this->createTag(
+                    [
+                        'property' => "og:{$tag}",
+                        'content'  => $value,
+                    ]
+                );
             }
         }
 
         return implode('', $html);
     }
+
 
     /**
      * Create twitter card tags
@@ -199,40 +229,47 @@ class MetaTag
     {
         $html = [];
 
-        foreach ($this->twitter as $tag)
-        {
+        foreach ($this->twitter as $tag) {
             // Get value for tag, default to dynamically set value
             $value = array_get($this->config['twitter'], $tag, $this->get($tag));
 
             if ($value && !isset($html[$tag])) {
-                $html[$tag] = $this->createTag([
-                    'property' => "twitter:{$tag}",
-                    'content' => $value
-                ]);
+                $html[$tag] = $this->createTag(
+                    [
+                        'property' => "twitter:{$tag}",
+                        'content'  => $value,
+                    ]
+                );
             }
         }
 
         // Set image
         if (empty($html['image:src']) && $this->get('image')) {
-            $html['image:src'] = $this->createTag([
-                'property' => "twitter:image:src",
-                'content' => $this->get('image')
-            ]);
+            $html['image:src'] = $this->createTag(
+                [
+                    'property' => "twitter:image:src",
+                    'content'  => $this->get('image'),
+                ]
+            );
         }
 
         // Set domain
         if (empty($html['domain'])) {
-            $html['domain'] = $this->createTag([
-                'property' => "twitter:domain",
-                'content' => $this->request->getHttpHost()
-            ]);
+            $html['domain'] = $this->createTag(
+                [
+                    'property' => "twitter:domain",
+                    'content'  => $this->request->getHttpHost(),
+                ]
+            );
         }
 
         return implode('', $html);
     }
 
+
     /**
      * @param  string $value
+     *
      * @return string
      */
     private function setTitle($value)
@@ -242,34 +279,41 @@ class MetaTag
         if ($title && $this->config['title_limit']) {
             $title = ' - '.$title;
             $limit = $this->config['title_limit'] - strlen($title);
-        }
-        else {
+        } else {
             $limit = 'title';
         }
 
         return $this->metas['title'] = self::cut($value, $limit).$title;
     }
 
+
     /**
      * Create meta tag from attributes
      *
      * @param  array $values
+     *
      * @return string
      */
     private function createTag(array $values)
     {
-        $attributes = array_map(function($key) use ($values) {
-            $value = $this->fix($values[$key]);
-            return "{$key}=\"{$value}\"";
-        }, array_keys($values));
+        $attributes = array_map(
+            function ($key) use ($values) {
+                $value = $this->fix($values[$key]);
+
+                return "{$key}=\"{$value}\"";
+            },
+            array_keys($values)
+        );
 
         $attributes = implode(' ', $attributes);
 
         return "<meta {$attributes}>\n    ";
     }
 
+
     /**
      * @param  string $text
+     *
      * @return string
      */
     private function fix($text)
@@ -280,26 +324,28 @@ class MetaTag
         return trim(str_replace('"', '&quot;', $text));
     }
 
+
     /**
      * @param  string $text
      * @param  string $key
+     *
      * @return string
      */
     private function cut($text, $key)
     {
         if (is_string($key) && isset($this->config[$key.'_limit'])) {
             $limit = $this->config[$key.'_limit'];
-        }
-        else if (is_integer($key)) {
-            $limit = $key;
-        }
-        else {
-            return $text;
+        } else {
+            if (is_integer($key)) {
+                $limit = $key;
+            } else {
+                return $text;
+            }
         }
 
         $length = strlen($text);
 
-        if ($length <= (int) $limit) {
+        if ($length <= (int)$limit) {
             return $text;
         }
 
@@ -312,10 +358,12 @@ class MetaTag
         return $text.'...';
     }
 
+
     /**
      * Returns an URL adapted to locale
      *
      * @param  string $locale
+     *
      * @return string
      */
     private function localizedURL($locale)
@@ -329,7 +377,9 @@ class MetaTag
 
         // Get host
         $array = explode('.', $this->request->getHttpHost());
-        $host = (array_key_exists(count($array) - 2, $array) ? $array[count($array) - 2] : '').'.'.$array[count($array) - 1];
+        $host = (array_key_exists(count($array) - 2, $array) ? $array[count($array) - 2] : '').'.'.$array[count(
+                $array
+            ) - 1];
 
         // Create URL from template
         $url = str_replace(

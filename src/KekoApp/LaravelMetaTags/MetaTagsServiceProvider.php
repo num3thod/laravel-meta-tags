@@ -6,12 +6,14 @@ use Illuminate\Support\ServiceProvider;
 
 class MetaTagsServiceProvider extends ServiceProvider
 {
+
     /**
      * Indicates if loading of the provider is deferred.
      *
      * @var bool
      */
     protected $defer = true;
+
 
     /**
      * Bootstrap the application events.
@@ -20,10 +22,13 @@ class MetaTagsServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $this->publishes([
-            __DIR__.'/../../config/config.php' => config_path('meta-tags.php')
-        ]);
+        $this->publishes(
+            [
+                __DIR__.'/../../config/config.php' => config_path('meta-tags.php'),
+            ]
+        );
     }
+
 
     /**
      * Register the service provider.
@@ -32,14 +37,15 @@ class MetaTagsServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app['metatag'] = $this->app->singleton(function ($app) {
-            return new MetaTag(
-                $app['request'],
-                $app['config']['meta-tags'],
-                $app['config']->get('app.locale')
-            );
-        });
+        $this->app['metatag'] = $this->app->singleton(
+            function ($app) {
+                return new MetaTag(
+                    $app['request'], $app['config']['meta-tags'], $app['config']->get('app.locale')
+                );
+            }
+        );
     }
+
 
     /**
      * Get the services provided by the provider.
