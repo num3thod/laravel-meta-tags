@@ -1,16 +1,16 @@
 {
-  "name": "torann/laravel-meta-tags",
+  "name": "kekoapp/laravel-meta-tags",
   "keywords": ["meta tags", "meta", "tags", "head", "laravel"],
-  "description": "A package to manage Header Meta Tags",
+  "description": "A package to manage Header Meta and OG Tags",
   "license": "MIT",
   "authors": [
     {
-      "name": "Lito",
-      "email": "lito@eordes.com"
+      "name": "KekoApp",
+      "email": "josh@kekoapp.com"
     },
     {
-      "name": "Daniel Stainback",
-      "email": "daniel@lyften.com"
+      "name": "eusonlito",
+      "email": "github.com/eusonlito"
     }
   ],
   "require": {
@@ -23,7 +23,7 @@
   },
   "autoload": {
     "psr-4": {
-      "Torann\\LaravelMetaTags\\": "src/Torann/LaravelMetaTags/"
+      "KekoApp\\LaravelMetaTags\\": "src/KekoApp/LaravelMetaTags/"
     }
   }
 }

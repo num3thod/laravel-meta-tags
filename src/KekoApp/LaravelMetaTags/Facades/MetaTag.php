@@ -1,6 +1,6 @@
 <?php
 
-namespace Torann\LaravelMetaTags\Facades;
+namespace KekoApp\LaravelMetaTags\Facades;
 
 use Illuminate\Support\Facades\Facade;
 
