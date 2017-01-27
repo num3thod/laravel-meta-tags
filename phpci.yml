@@ -10,6 +10,7 @@ test:
     ignore:
       - _ide_helper.php
       - tests/
+      - vendor/
   php_code_sniffer:
     path: "src/KekoApp"
     standard: "PSR1,PSR2"
@@ -17,6 +18,7 @@ test:
     path: "src/KekoApp"
     ignore:
       - tests/
+      - vendor/
     rules:
       - "/phpmd.xml"
     allow_failures: true
