@@ -335,12 +335,10 @@ class MetaTag
     {
         if (is_string($key) && isset($this->config[$key.'_limit'])) {
             $limit = $this->config[$key.'_limit'];
+        } elseif (is_integer($key)) {
+            $limit = $key;
         } else {
-            if (is_integer($key)) {
-                $limit = $key;
-            } else {
-                return $text;
-            }
+            return $text;
         }
 
         $length = strlen($text);
