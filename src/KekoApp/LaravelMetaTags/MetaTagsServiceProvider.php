@@ -40,8 +40,8 @@ class MetaTagsServiceProvider extends ServiceProvider
         $this->app->singleton('metatag', function ($app) {
             return new MetaTag(
                 $app['request'],
-                $app['config']->get('app.locale'),
-                $app['config']['meta-tags']
+                $app['config']['meta-tags'],
+                $app['config']->get('app.locale')
             );
         });
 

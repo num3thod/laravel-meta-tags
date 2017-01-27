@@ -73,13 +73,13 @@ class MetaTag
 
     /**
      * @param  \Illuminate\Http\Request $request
-     * @param  array                    $config
      * @param  string                   $defaultLocale
+     * @param  array                    $config
      */
-    public function __construct(Request $request, $defaultLocale, array $config = [])
+    public function __construct(Request $request, array $config, $defaultLocale)
     {
         $this->request = $request;
-        $this->config = $config;
+        $this->config = $config ? $config : [];
 
         $this->set('title', $this->config['title']);
         $this->set('url', $this->request->url());
