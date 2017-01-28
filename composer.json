@@ -7,7 +7,7 @@
     "head",
     "laravel"
   ],
-  "description": "A package to manage Header Meta and OG Tags",
+  "description": "Easily set meta and OG tags from your Laravel 5.4 controllers",
   "license": "MIT",
   "authors": [
     {
