@@ -1,6 +1,6 @@
 <?php
 
-use KekoApp\LaravelMeta\Meta;
+use KekoApp\LaravelMetaTags\MetaTag as Meta;
 
 class Tests extends PHPUnit_Framework_TestCase
 {
