@@ -1,4 +1,5 @@
 <?php
+
 use KekoApp\LaravelMeta\Meta;
 
 class Tests extends PHPUnit_Framework_TestCase
