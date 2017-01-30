@@ -14,7 +14,7 @@ class Tests extends PHPUnit_Framework_TestCase
     {
         self::$title = self::text(20);
 
-        $this->Meta = new Meta(
+        $this->Meta = new Meta(null,
             [
                 'title_limit'       => 70,
                 'description_limit' => 200,
