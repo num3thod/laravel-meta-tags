@@ -1,5 +1,7 @@
 # Laravel Meta Tags
 
+[![Build Status](https://travis-ci.org/KekoApp/laravel-meta-tags.svg?branch=master)](https://travis-ci.org/KekoApp/laravel-meta-tags)
+
 With this package you can manage header Meta and OG Tags from Laravel controllers. Kept up to date for the latest Laravel versions.
 
 While there is a few forks of this original package this is the only one kept updated for Laravel 5.4!
