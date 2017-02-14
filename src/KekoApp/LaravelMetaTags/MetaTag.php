@@ -380,7 +380,7 @@ class MetaTag
     {
         $title = $this->config['title'];
 
-        if ($title && $this->config['title_limit']) {
+        if ($title && $title != $value && $this->config['title_limit']) {
             $title = ' '.$this->config['title_tab'].' '.$title;
             $limit = $this->config['title_limit'] - strlen($title);
         } else {
