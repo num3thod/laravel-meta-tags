@@ -102,7 +102,7 @@ class MetaTag
     {
         $value = $this->fix($value);
 
-        $method = 'set'.$key;
+        $method = 'set'.ucfirst($key);
 
         if (method_exists($this, $method)) {
             return $this->$method($value);
@@ -378,12 +378,13 @@ class MetaTag
      */
     private function setTitle($value)
     {
-        $title = $this->title;
+        $title = $this->config['title'];
 
-        if ($title && $this->config['title_limit']) {
-            $title = ' - '.$title;
+        if ($value != $title) {
+            $title = ' '.$this->config['title_tab'].' '.$title;
             $limit = $this->config['title_limit'] - strlen($title);
         } else {
+            $title = '';
             $limit = 'title';
         }
 
