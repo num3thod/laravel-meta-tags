@@ -6,6 +6,7 @@ While there is a few forks of this original package this is the only one kept up
 
 ### Latest package version: 5.4.3
 ### Current supported Laravel version: 5.4.*
+### Now with schema.org generation
 
 ----------
 
@@ -61,6 +62,12 @@ Various settings for these options can be found in the `config/meta-tags.php` fi
 
 ```php
 {!! MetaTag::openGraph() !!}
+```
+
+**Schema.org**
+
+```php
+{!! MetaTag::schemaOrg() !!}
 ```
 
 
